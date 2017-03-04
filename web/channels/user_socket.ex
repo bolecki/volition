@@ -2,7 +2,7 @@ defmodule Volition.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "area:*", Volition.RoomChannel
+  channel "area:*", Volition.AreaChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
