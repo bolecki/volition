@@ -17,6 +17,10 @@ defmodule Volition.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/volition", GameController, :index
+    get "/hello", HelloController, :index
+    get "/hello/:messenger", HelloController, :show
+    get "/hello/:messenger/:receiver", HelloController, :show
   end
 
   # Other scopes may use custom stacks.
