@@ -1,7 +1,9 @@
 defmodule Volition.AreaChannel do
   use Phoenix.Channel
 
-  def join("area:" <> area_id, _message, socket) do
+  intercept ["new_msg"]
+
+  def join("area:" <> _area_id, _message, socket) do
     {:ok, socket}
   end
 
