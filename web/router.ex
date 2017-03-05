@@ -21,6 +21,10 @@ defmodule Volition.Router do
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
     get "/hello/:messenger/:receiver", HelloController, :show
+
+    resources "/players", PlayerController
+    resources "/areas", AreaController
+    resources "/nearbys", NearbyController
   end
 
   # Other scopes may use custom stacks.

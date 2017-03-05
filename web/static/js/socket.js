@@ -60,14 +60,20 @@ let messagesContainer = document.querySelector("#messages")
 
 chatInput.addEventListener("keypress", event => {
   if(event.keyCode === 13){
-    channel.push("new_msg", {body: chatInput.value})
+  	try{
+      var payload = JSON.parse(chatInput.value);
+      channel.push("create", {body: payload})
+    }catch(err){
+      channel.push("new_msg", {body: chatInput.value})
+    }
     chatInput.value = ""
   }
 })
 
 channel.on("new_msg", payload => {
   let messageItem = document.createElement("li");
-  messageItem.innerText = `[${Date()}] ${payload.body}`
+  // messageItem.innerText = `[${Date()}] ${payload.body}`
+  messageItem.innerText = `${payload.body}`
   messagesContainer.appendChild(messageItem)
 })
 

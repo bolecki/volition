@@ -1,0 +1,33 @@
+<h2>Show player</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @player.name %>
+  </li>
+
+  <li>
+    <strong>Area:</strong>
+    <%= @player.area_id %>
+  </li>
+
+  <li>
+    <strong>Gold:</strong>
+    <%= @player.gold %>
+  </li>
+
+  <li>
+    <strong>Health:</strong>
+    <%= @player.health %>
+  </li>
+
+  <li>
+    <strong>Mana:</strong>
+    <%= @player.mana %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: player_path(@conn, :edit, @player) %>
+<%= link "Back", to: player_path(@conn, :index) %>

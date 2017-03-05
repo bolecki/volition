@@ -1,0 +1,6 @@
+<h2>Edit area</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: area_path(@conn, :update, @area) %>
+
+<%= link "Back", to: area_path(@conn, :index) %>

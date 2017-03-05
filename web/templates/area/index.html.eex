@@ -1,0 +1,30 @@
+<h2>Listing areas</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>History</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for area <- @areas do %>
+    <tr>
+      <td><%= area.name %></td>
+      <td><%= area.description %></td>
+      <td><%= area.history %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: area_path(@conn, :show, area), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: area_path(@conn, :edit, area), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: area_path(@conn, :delete, area), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New area", to: area_path(@conn, :new) %>

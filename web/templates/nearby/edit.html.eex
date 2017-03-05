@@ -1,0 +1,6 @@
+<h2>Edit nearby</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: nearby_path(@conn, :update, @nearby) %>
+
+<%= link "Back", to: nearby_path(@conn, :index) %>

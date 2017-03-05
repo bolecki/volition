@@ -1,0 +1,13 @@
+<h2>Show nearby</h2>
+
+<ul>
+
+  <li>
+    <strong>Area:</strong>
+    <%= @nearby.area_id %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: nearby_path(@conn, :edit, @nearby) %>
+<%= link "Back", to: nearby_path(@conn, :index) %>

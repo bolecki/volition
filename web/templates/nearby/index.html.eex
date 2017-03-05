@@ -1,0 +1,26 @@
+<h2>Listing nearbys</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Area</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for nearby <- @nearbys do %>
+    <tr>
+      <td><%= nearby.area_id %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: nearby_path(@conn, :show, nearby), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: nearby_path(@conn, :edit, nearby), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: nearby_path(@conn, :delete, nearby), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New nearby", to: nearby_path(@conn, :new) %>
