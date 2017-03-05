@@ -5,8 +5,7 @@ defmodule Volition.Area do
     field :name, :string
     field :description, :string
     field :history, :string
-    has_many :_nearbys, Volition.Nearby
-    has_many :nearbys, through: [:_nearbys, :nearby]
+    many_to_many :nearbys, Volition.Area, join_through: Volition.Nearby, join_keys: [area_id: :id, nearby_id: :id]
 
     timestamps()
   end
