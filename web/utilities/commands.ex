@@ -1,4 +1,5 @@
 defmodule Volition.Commands do
+  require Logger
 
   def command("am " <> name, socket) do
     character =
@@ -32,7 +33,30 @@ defmodule Volition.Commands do
     {:noreply, socket}
   end
 
+  def command("go " <> place, socket) do
+    if socket.assigns[:player] do
+      names = Enum.map(socket.assigns[:player].area.nearbys, fn x -> x.name end)
+      if Enum.member?(names, place) do
+        Phoenix.Channel.broadcast! socket, "new_msg", %{body: socket.assigns[:player].name <> " is leaving for " <> place}
+        Phoenix.Channel.push socket, "new_place", %{body: place}
+      else
+        Phoenix.Channel.push socket, "new_msg", %{body: "you are not near there!"}
+      end
+    else
+      Phoenix.Channel.push socket, "new_msg", %{body: "to am is to place"}
+    end
+    area_id = Volition.Repo.get_by(Volition.Area, name: place).id
+    changeset = Ecto.Changeset.change(socket.assigns[:player], %{area_id: area_id})
+    Volition.Repo.update(changeset)
+    character =
+      Volition.Repo.get_by(Volition.Player, name: socket.assigns[:player].name)
+      |> Volition.Repo.preload(area: :nearbys)
+    socket = Phoenix.Socket.assign(socket, :player, character)
+    {:noreply, socket}
+  end
+
   def command(message, socket) do
+    Logger.debug"> broadcasting #{inspect message}"
     if socket.assigns[:player] do
       Phoenix.Channel.broadcast! socket, "new_msg", %{body: socket.assigns[:player].name <> ": " <> message}
     else
