@@ -10,6 +10,7 @@ defmodule Volition.Commands do
 
     socket = Phoenix.Socket.assign(socket, :player, character)
     Phoenix.Channel.push socket, "new_msg", %{body: "you are " <> name}
+    Phoenix.Channel.push socket, "new_place", %{body: socket.assigns[:player].area.name}
     {:noreply, socket}
   end
 
