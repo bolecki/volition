@@ -2,13 +2,8 @@ defmodule Volition.Commands do
   require Logger
 
   def command("am " <> name, socket) do
-    character =
-      Volition.Repo.get_by(Volition.Player, name: name)
-      |> Volition.Repo.preload(area: :nearbys) ||
-      Volition.Repo.insert!(%Volition.Player{name: name, area_id: 2, gold: 0, health: 100, mana: 100})
-      |> Volition.Repo.preload(area: :nearbys)
-
-    socket = Phoenix.Socket.assign(socket, :player, character)
+    socket = assign_user(name, socket)
+    Phoenix.Channel.push socket, "you_are", %{body: name}
     Phoenix.Channel.push socket, "new_msg", %{body: "you are " <> name}
     Phoenix.Channel.push socket, "new_place", %{body: socket.assigns[:player].area.name}
     {:noreply, socket}
@@ -69,4 +64,14 @@ defmodule Volition.Commands do
   # def command("", socket) do
   #   {:noreply, socket}
   # end
+
+  def assign_user(name, socket) do
+    character =
+      Volition.Repo.get_by(Volition.Player, name: name)
+      |> Volition.Repo.preload(area: :nearbys) ||
+      Volition.Repo.insert!(%Volition.Player{name: name, area_id: 2, gold: 0, health: 100, mana: 100})
+      |> Volition.Repo.preload(area: :nearbys)
+
+    Phoenix.Socket.assign(socket, :player, character)
+  end
 end

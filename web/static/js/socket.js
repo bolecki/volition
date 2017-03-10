@@ -58,6 +58,8 @@ let channel           = socket.channel("area:lobby", {});
 let chatInput         = document.querySelector("#chat-input");
 let messagesContainer = document.querySelector("#messages");
 
+let name = "anonymous";
+
 function joinChannel(newChannel){
   var listener;
   chatInput.addEventListener("keypress", listener = event => {
@@ -67,7 +69,7 @@ function joinChannel(newChannel){
           var payload = JSON.parse(chatInput.value);
           newChannel.push("create", {body: payload});
         }catch(err){
-          newChannel.push("new_msg", {body: chatInput.value});
+          newChannel.push("new_msg", {body: chatInput.value, user: name});
         }
         chatInput.value = "";
       }
@@ -78,6 +80,11 @@ function joinChannel(newChannel){
     let messageItem = document.createElement("li");
     messageItem.innerText = `${payload.body}`;
     messagesContainer.appendChild(messageItem);
+  })
+
+  newChannel.on("you_are", payload => {
+    console.log
+    name = `${payload.body}`;
   })
 
   newChannel.on("new_place", payload => {

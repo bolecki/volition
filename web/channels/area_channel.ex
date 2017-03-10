@@ -8,7 +8,8 @@ defmodule Volition.AreaChannel do
     {:ok, socket}
   end
 
-  def handle_in("new_msg", %{"body" => body}, socket) do
+  def handle_in("new_msg", %{"body" => body, "user" => user}, socket) do
+    socket = check_user user, socket
     Logger.debug"> new_msg #{inspect body}"
     Volition.Commands.command body, socket
   end
@@ -38,5 +39,25 @@ defmodule Volition.AreaChannel do
   def terminate(reason, socket) do
     Logger.debug"> leave #{inspect reason}"
     {:ok, socket}
+  end
+
+  def check_user(user, socket) do
+    if socket.assigns[:player] do
+      if user == socket.assigns[:player].name do
+        Logger.debug"> socket already #{inspect user}"
+        socket
+      else
+        Logger.debug"> user changing from #{inspect socket.assigns[:player].name} to #{inspect user}"
+        Volition.Commands.assign_user user, socket
+      end
+    else
+      if user == "anonymous" do
+        Logger.debug"> user anonymous"
+        socket
+      else
+        Logger.debug"> user new #{inspect user}"
+        Volition.Commands.assign_user user, socket
+      end
+    end
   end
 end
