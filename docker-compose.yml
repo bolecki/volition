@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+
+  volition:
+    build: .
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/code
+
+  db:
+    image: postgres:9.4
+    environment:
+      POSTGRES_PASSWORD: postgres
