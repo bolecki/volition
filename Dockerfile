@@ -10,4 +10,4 @@ RUN mix local.hex --force
 RUN mix local.rebar --force
 
 WORKDIR /code
-ENTRYPOINT ["mix", "phoenix.server"]
+ENTRYPOINT ["bash", "docker-entrypoint.sh"]

@@ -39,5 +39,5 @@ config :volition, Volition.Repo,
   username: "postgres",
   password: "postgres",
   database: "volition_dev",
-  hostname: "192.168.99.100",
+  hostname: "db",
   pool_size: 10
