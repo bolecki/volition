@@ -8,10 +8,15 @@ services:
       - 4000:4000
     volumes:
       - .:/code
+    depends_on:
+      - "db"
 
   db:
     image: postgres:9.4
     volumes:
-      - /var/lib/postgresql/data
+      - volition_db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
+
+volumes:
+  volition_db:
