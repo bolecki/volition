@@ -18,6 +18,16 @@ defmodule Volition.Commands do
     {:noreply, socket}
   end
 
+  def command("who dat", socket) do
+    presence = Volition.Presence.list(socket)
+    others = Enum.map(presence, fn {k, v} -> k end)
+    msg = Enum.join(others, ", ")
+    Logger.error"> dat list: #{inspect msg}"
+    Logger.error"> dat is: #{inspect presence}"
+    Phoenix.Channel.push socket, "new_msg", %{body: msg}
+    {:noreply, socket}
+  end
+
   def command("nearby", socket) do
     if socket.assigns[:player] do
       names = Enum.map(socket.assigns[:player].area.nearbys, fn x -> x.name end)

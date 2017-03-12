@@ -2,7 +2,7 @@ defmodule Volition.AreaChannel do
   use Phoenix.Channel
   require Logger
 
-  intercept ["new_msg"]
+  intercept ["new_msg", "presence_diff"]
 
   def join("area:" <> _area_id, _message, socket) do
     {:ok, socket}
@@ -31,6 +31,13 @@ defmodule Volition.AreaChannel do
     {:noreply, socket}
   end
 
+  def handle_out("presence_diff", payload, socket) do
+    Volition.Presence.track(socket, socket.assigns[:player].name, %{
+      updated: :os.system_time(:milli_seconds)
+    })
+    {:noreply, socket}
+  end
+
   def leave(_reason, socket) do
     Logger.debug "Socket: #{inspect(socket.assigns[:player].name)} leaving"
     {:ok, socket}
@@ -50,6 +57,10 @@ defmodule Volition.AreaChannel do
         Logger.debug"> user changing from #{inspect socket.assigns[:player].name} to #{inspect user}"
         Volition.Commands.assign_user user, socket
       end
+      Volition.Presence.track(socket, socket.assigns[:player].name, %{
+        updated: :os.system_time(:milli_seconds)
+      })
+      socket
     else
       if user == "anonymous" do
         Logger.debug"> user anonymous"
