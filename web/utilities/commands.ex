@@ -22,8 +22,7 @@ defmodule Volition.Commands do
     presence = Volition.Presence.list(socket)
     others = Enum.map(presence, fn {k, v} -> k end)
     msg = Enum.join(others, ", ")
-    Logger.error"> dat list: #{inspect msg}"
-    Logger.error"> dat is: #{inspect presence}"
+    Logger.debug"> dat is: #{inspect presence}"
     Phoenix.Channel.push socket, "new_msg", %{body: msg}
     {:noreply, socket}
   end
