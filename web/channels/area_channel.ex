@@ -5,11 +5,22 @@ defmodule Volition.AreaChannel do
   intercept ["new_msg", "presence_diff"]
 
   def join("area:" <> _area_id, _message, socket) do
+    send(self, :after_join)
     {:ok, socket}
   end
 
+  def handle_info(:after_join, socket) do
+    push socket, "presence_state", Volition.Presence.list(socket)
+    player = GenServer.call(socket.assigns.player, :get_player)
+    Volition.Presence.track(socket, player.name, %{
+      updated: :os.system_time(:milli_seconds)
+    })
+    {:noreply, socket}
+  end
+
   def handle_in("new_msg", %{"body" => body, "user" => user}, socket) do
-    socket = check_user user, socket
+    player = GenServer.call(socket.assigns.player, :get_player)
+    Logger.debug"> got message from: #{inspect player.name}"
     Logger.debug"> new_msg #{inspect body}"
     Volition.Commands.command body, socket
   end
@@ -32,43 +43,31 @@ defmodule Volition.AreaChannel do
   end
 
   def handle_out("presence_diff", payload, socket) do
-    Volition.Presence.track(socket, socket.assigns[:player].name, %{
+    player = GenServer.call(socket.assigns.player, :get_player)
+    Volition.Presence.track(socket, player.name, %{
       updated: :os.system_time(:milli_seconds)
     })
     {:noreply, socket}
   end
 
   def leave(_reason, socket) do
-    Logger.debug "Socket: #{inspect(socket.assigns[:player].name)} leaving"
+    player = GenServer.call(socket.assigns.player, :get_player)
+    Logger.debug "Socket: #{inspect(player.name)} leaving"
     {:ok, socket}
   end
 
   def terminate(reason, socket) do
     Logger.debug"> leave #{inspect reason}"
+    player = GenServer.call(socket.assigns.player, :get_player)
+    character = Volition.Repo.get_by(Volition.Player, name: player.name)
+    changeset = Ecto.Changeset.change(character, %{
+      health: player.health,
+      mana: player.mana,
+      gold: player.gold,
+      area_id: player.area.id
+    })
+    Volition.Repo.update(changeset)
+    Logger.debug"> updated character"
     {:ok, socket}
-  end
-
-  def check_user(user, socket) do
-    if socket.assigns[:player] do
-      if user == socket.assigns[:player].name do
-        Logger.debug"> socket already #{inspect user}"
-        socket
-      else
-        Logger.debug"> user changing from #{inspect socket.assigns[:player].name} to #{inspect user}"
-        Volition.Commands.assign_user user, socket
-      end
-      Volition.Presence.track(socket, socket.assigns[:player].name, %{
-        updated: :os.system_time(:milli_seconds)
-      })
-      socket
-    else
-      if user == "anonymous" do
-        Logger.debug"> user anonymous"
-        socket
-      else
-        Logger.debug"> user new #{inspect user}"
-        Volition.Commands.assign_user user, socket
-      end
-    end
   end
 end

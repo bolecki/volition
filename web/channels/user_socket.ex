@@ -1,5 +1,6 @@
 defmodule Volition.UserSocket do
   use Phoenix.Socket
+  require Logger
 
   ## Channels
   channel "area:*", Volition.AreaChannel
@@ -19,8 +20,11 @@ defmodule Volition.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+  def connect(%{"user" => user}, socket) do
+    Logger.debug"> register: #{inspect user}"
+    {:ok, pid} = GenServer.start_link(Volition.PlayerServer, Volition.PlayerServer.new(user))
+    Logger.debug"> created pid: #{inspect pid}"
+    {:ok, assign(socket, :player, pid)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
