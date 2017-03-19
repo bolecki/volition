@@ -5,7 +5,7 @@ defmodule Volition.AreaChannel do
   intercept ["new_msg", "presence_diff"]
 
   def join("area:" <> _area_id, _message, socket) do
-    send(self, :after_join)
+    send(self(), :after_join)
     {:ok, socket}
   end
 
@@ -18,7 +18,7 @@ defmodule Volition.AreaChannel do
     {:noreply, socket}
   end
 
-  def handle_in("new_msg", %{"body" => body, "user" => user}, socket) do
+  def handle_in("new_msg", %{"body" => body}, socket) do
     player = GenServer.call(socket.assigns.player, :get_player)
     Logger.debug"> got message from: #{inspect player.name}"
     Logger.debug"> new_msg #{inspect body}"
@@ -42,7 +42,7 @@ defmodule Volition.AreaChannel do
     {:noreply, socket}
   end
 
-  def handle_out("presence_diff", payload, socket) do
+  def handle_out("presence_diff", _payload, socket) do
     player = GenServer.call(socket.assigns.player, :get_player)
     Volition.Presence.track(socket, player.name, %{
       updated: :os.system_time(:milli_seconds)

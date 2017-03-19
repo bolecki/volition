@@ -20,7 +20,7 @@ defmodule Volition.PlayerServer do
     {:reply, player, player}
   end
 
-  def handle_cast({:set_player, player}, state) do
+  def handle_cast({:set_player, player}, _state) do
     {:noreply, player}
   end
 end
