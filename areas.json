@@ -1,0 +1,22 @@
+{
+  "areas": [
+    {
+      "name": "place",
+      "description": "place",
+      "history": "place",
+      "nearby": ["new"]
+    },
+    {
+      "name": "new",
+      "description": "new",
+      "history": "new",
+      "nearby": ["place", "home"]
+    },
+    {
+      "name": "home",
+      "description": "home",
+      "history": "home",
+      "nearby": ["new"]
+    }
+  ]
+}
